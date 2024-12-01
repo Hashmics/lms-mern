@@ -46,7 +46,7 @@ const Navbar = () => {
                         user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Avatar size={"30"}>
+                                    <Avatar className='cursor-pointer'>
                                         <AvatarImage src="https://github.com/shadcn.png" alt="User Avatar" />
                                         <AvatarFallback>CN</AvatarFallback>
                                     </Avatar>
@@ -56,7 +56,9 @@ const Navbar = () => {
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
                                         <DropdownMenuItem>
-                                            <span>My Learning</span>
+                                            <Link to='my-learning'>
+                                                <span>My Learning</span>
+                                            </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem>
                                             <span>Edit Profile</span>
