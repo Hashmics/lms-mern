@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './database/db.js';
 import userRoute from './routes/userRoute.js'
+import courseRoute from './routes/courseRoute.js'
 import cookieParser from 'cookie-parser';
 import cors from 'cors'
 
@@ -22,6 +23,7 @@ app.use(cors({
 
 //API
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/course", courseRoute);
 
 app.listen(PORT, () => {
     console.log(`Server is listening on ${PORT}`);
