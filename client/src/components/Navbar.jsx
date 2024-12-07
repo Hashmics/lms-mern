@@ -29,10 +29,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useLogoutUserMutation } from "@/features/api/authApi";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
 
-    const user = true;
+    const { user } = useSelector(store => store.auth);
     const [logoutUser, { data, isSuccess }] = useLogoutUserMutation();
     const navigate = useNavigate();
 
@@ -63,7 +64,10 @@ const Navbar = () => {
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Avatar className='cursor-pointer'>
-                                        <AvatarImage src="https://github.com/shadcn.png" alt="User Avatar" />
+                                        <AvatarImage
+                                            src={user?.photoURL || "https://github.com/shadcn.png"}
+                                            alt="User Avatar"
+                                        />
                                         <AvatarFallback>CN</AvatarFallback>
                                     </Avatar>
                                 </DropdownMenuTrigger>
@@ -85,22 +89,28 @@ const Navbar = () => {
                                     <DropdownMenuItem onClick={logoutHandler}>
                                         Log out
                                     </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem>
-                                        <span>Dashboard</span>
-                                    </DropdownMenuItem>
+                                    {
+                                        user.role === "instructor" && (
+                                            <>
+                                                < DropdownMenuSeparator />
+                                                <DropdownMenuItem>
+                                                    Dashboard
+                                                </DropdownMenuItem>
+                                            </>
+                                        )
+                                    }
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         ) : (
                             <div className="flex items-center gap-2">
-                                <Button variant="outline">Login</Button>
-                                <Button>Signup</Button>
+                                <Button variant="outline" onClick={() => navigate('/login')}>Login</Button>
+                                <Button onClick={() => navigate('/login')}>Signup</Button>
                             </div>
                         )
                     }
                     <DarkMode />
                 </div>
-            </div>
+            </div >
             {/* Mobile Device */}
             <div className="flex md:hidden items-center justify-between px-4 h-full" >
                 <h1 className="font-extrabold text-xl">E_Learning</h1>
