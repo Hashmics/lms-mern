@@ -29,4 +29,28 @@ export const createCourse = async (req, res) => {
             message: "Error creating course",
         })
     }
+};
+
+export const getCreatorCourses = async (req, res) => {
+    try {
+
+        const userId = req.id;
+        const courses = await Course.find({ creator: userId });
+        if (!courses) {
+            return res.status(404).json({
+                success: false,
+                message: "No courses found for this user"
+            });
+        };
+
+        return res.status(200).json({
+            courses
+        })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: "Error creating course",
+        })
+    }
 }
