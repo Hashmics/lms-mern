@@ -92,10 +92,12 @@ const Navbar = () => {
                                     {
                                         user.role === "instructor" && (
                                             <>
-                                                < DropdownMenuSeparator />
-                                                <DropdownMenuItem>
-                                                    Dashboard
-                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator />
+                                                <Link to={'/admin'}>
+                                                    <DropdownMenuItem>
+                                                        Dashboard
+                                                    </DropdownMenuItem>
+                                                </Link>
                                             </>
                                         )
                                     }
