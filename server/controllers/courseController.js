@@ -1,4 +1,6 @@
 import { Course } from "../models/courseModel.js";
+import { deleteMediaFromCloudinary } from '../utils/cloudinary.js'
+import { uploadMedia } from './../utils/cloudinary';
 
 export const createCourse = async (req, res) => {
     try {
@@ -50,7 +52,65 @@ export const getCreatorCourses = async (req, res) => {
     } catch (error) {
         console.log(error)
         return res.status(500).json({
-            message: "Error creating course",
+            message: "Error Fetching course",
+        })
+    }
+};
+
+export const updateCourse = async (req, res) => {
+    try {
+
+        const courseId = req.params.courseId;
+        const {
+            courseTitle,
+            subTitle,
+            description,
+            category,
+            courseLevel,
+            coursePrice
+        } = req.body;
+        const thumbnail = req.file;
+
+        let course = await Course.findById(courseTitle)
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: "Course not found"
+            });
+        };
+
+        let courseThumbnail;
+        if (thumbnail) {
+            if (course.courseThumbnail) {
+                const publicId = course.courseThumbnail.split('/').pop().split('.')[0];
+                await deleteMediaFromCloudinary(publicId);
+            }
+            courseThumbnail = await uploadMedia(thumbnail.path)
+        };
+
+        const updateData = {
+            courseTitle,
+            subTitle,
+            description,
+            category,
+            courseLevel,
+            coursePrice,
+            courseThumbnail: courseThumbnail?.secure_url
+        }
+
+        course = await Course.findByIdAndUpdate(courseId, updateData, { new: true });
+
+        return res.status(200).json({
+            success: true,
+            course,
+            message: "Course updated successfully"
+        })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: "Error Updating course",
         })
     }
 }
