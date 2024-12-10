@@ -79,10 +79,10 @@ const Login = () => {
             toast.error(registerError.data.message || "Failed to signup");
         }
         if (loginError) {
-            toast.error(loginError.data.message || "Failed to Login");
+            toast.error(loginError?.data?.message || "Failed to Login");
         }
         if (loginIsSuccess && loginData) {
-            toast.success(loginData.message || "Login Successfully");
+            toast.success(loginData?.message || "Login Successfully");
             navigate('/')
         }
     }, [

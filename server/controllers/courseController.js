@@ -1,6 +1,6 @@
 import { Course } from "../models/courseModel.js";
-import { deleteMediaFromCloudinary } from '../utils/cloudinary.js'
-import { uploadMedia } from './../utils/cloudinary';
+import { deleteMedia } from '../utils/cloudinary.js'
+import { uploadMedia } from './../utils/cloudinary.js';
 
 export const createCourse = async (req, res) => {
     try {
@@ -52,7 +52,7 @@ export const getCreatorCourses = async (req, res) => {
     } catch (error) {
         console.log(error)
         return res.status(500).json({
-            message: "Error Fetching course",
+            message: "Error Fetching Creator course",
         })
     }
 };
@@ -71,7 +71,7 @@ export const updateCourse = async (req, res) => {
         } = req.body;
         const thumbnail = req.file;
 
-        let course = await Course.findById(courseTitle)
+        let course = await Course.findById(courseId)
 
         if (!course) {
             return res.status(404).json({
@@ -84,7 +84,7 @@ export const updateCourse = async (req, res) => {
         if (thumbnail) {
             if (course.courseThumbnail) {
                 const publicId = course.courseThumbnail.split('/').pop().split('.')[0];
-                await deleteMediaFromCloudinary(publicId);
+                await deleteMedia(publicId);
             }
             courseThumbnail = await uploadMedia(thumbnail.path)
         };
@@ -111,6 +111,32 @@ export const updateCourse = async (req, res) => {
         console.log(error)
         return res.status(500).json({
             message: "Error Updating course",
+        })
+    }
+};
+
+export const getCourseById = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+
+        const course = await Course.findById(courseId);
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: "Course not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            course
+        })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: "Error Fetching course",
         })
     }
 }
