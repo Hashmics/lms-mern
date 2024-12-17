@@ -207,3 +207,129 @@ export const getCourseLecture = async (req, res) => {
         });
     }
 };
+
+export const editLecture = async (req, res) => {
+    try {
+        const { lectureTitle, videoInfo, isPreviewFree } = req.body;
+
+        const { courseId, lectureId } = req.params;
+        const lecture = await Lecture.findById(lectureId);
+        if (!lecture) {
+            return res.status(404).json({
+                message: "Lecture not found!"
+            })
+        }
+
+        // update lecture
+        if (lectureTitle) lecture.lectureTitle = lectureTitle;
+        if (videoInfo?.videoUrl) lecture.videoUrl = videoInfo.videoUrl;
+        if (videoInfo?.publicId) lecture.publicId = videoInfo.publicId;
+        lecture.isPreviewFree = isPreviewFree;
+
+        await lecture.save();
+
+        // Ensure the course still has the lecture id if it was not aleardy added;
+        const course = await Course.findById(courseId);
+        if (course && !course.lectures.includes(lecture._id)) {
+            course.lectures.push(lecture._id);
+            await course.save();
+        };
+        return res.status(200).json({
+            lecture,
+            message: "Lecture updated successfully."
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Failed to edit lectures"
+        })
+        error: error.message
+    }
+}
+
+export const removeLecture = async (req, res) => {
+    try {
+        const { lectureId } = req.params;
+        const lecture = await Lecture.findByIdAndDelete(lectureId);
+
+        if (!lecture) {
+            return res.status(404).json({
+                success: false,
+                message: "Lecture not found"
+            });
+        };
+
+        if (lecture.publicId) {
+            await deleteMedia(lecture.publicId);
+        }
+
+        await Course.updateOne(
+            { lectures: lectureId },
+            { $pull: { lectures: lectureId } }
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Lecture deleted successfully"
+        });
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: "Internal Server error",
+            error: error.message
+        })
+    }
+};
+
+export const getLectureById = async (req, res) => {
+    try {
+
+        const { lectureId } = req.params;
+        const lecture = await Lecture.findById(lectureId);
+        if (!lecture) {
+            return res.status(404).json({
+                success: false,
+                message: "Lecture not found"
+            });
+        };
+
+        return res.status(200).json({
+            success: true,
+            lecture
+        });
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: "Internal Server error",
+            error: error.message
+        })
+    }
+};
+
+export const togglePublishCourse = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const { publish } = req.query; // true, false
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({
+                message: "Course not found!"
+            });
+        }
+        // publish status based on the query paramter
+        course.isPublished = publish === "true";
+        await course.save();
+
+        const statusMessage = course.isPublished ? "Published" : "Unpublished";
+        return res.status(200).json({
+            message: `Course is ${statusMessage}`
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Failed to update status"
+        })
+    }
+};

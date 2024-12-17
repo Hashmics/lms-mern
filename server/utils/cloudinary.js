@@ -13,12 +13,13 @@ export const uploadMedia = async (file) => {
     try {
 
         const uploadResponse = await cloudinary.uploader.upload(file, {
-            resourse_type: "auto"
+            resource_type: "auto",
         });
         return uploadResponse;
 
     } catch (error) {
-        console.log(error)
+        console.error("Cloudinary Upload Error:", error);
+        throw new Error("Failed to upload media to Cloudinary.");
     }
 };
 
