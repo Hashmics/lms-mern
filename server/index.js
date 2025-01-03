@@ -6,6 +6,8 @@ import courseRoute from './routes/courseRoute.js'
 import mediaRoute from './routes/mediaRoutes.js'
 import cookieParser from 'cookie-parser';
 import cors from 'cors'
+import purchaseRoute from "./routes/purchaseCourseRoute.js";
+import courseProgressRoute from "./routes/courseProgressRoute.js";
 
 dotenv.config({});
 
@@ -27,6 +29,8 @@ app.use(cors({
 app.use("/api/v1/media", mediaRoute);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/course", courseRoute);
+app.use("/api/v1/purchase", purchaseRoute);
+app.use("/api/v1/progress", courseProgressRoute);
 
 
 app.listen(PORT, () => {

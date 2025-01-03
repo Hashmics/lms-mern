@@ -3,7 +3,7 @@ import Course from "./Course";
 const MyLearnings = () => {
 
     const isLoading = false;
-    const myLearningCourses = [1, 2];
+    const myLearningCourses = [];
 
 
     return (
@@ -16,7 +16,7 @@ const MyLearnings = () => {
                     ) : myLearningCourses.length === 0 ? (<p>You are not enrolled in any Course</p>) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                             {
-                                [1, 2].map((course, index) => <Course key={index} />)
+                                [1, 2].map((course, index) => <Course key={index} course={course} />)
                             }
                         </div>
                     )

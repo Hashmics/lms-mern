@@ -9,6 +9,7 @@ import {
     getCourseLecture,
     getCreatorCourses,
     getLectureById,
+    getPublishedCourse,
     removeLecture,
     togglePublishCourse,
     updateCourse
@@ -18,6 +19,7 @@ import {
 const router = express.Router();
 
 router.route("/").post(isAuthenticated, createCourse);
+router.route("/published-courses").get(isAuthenticated, getPublishedCourse)
 router.route("/").get(isAuthenticated, getCreatorCourses);
 router.route("/:courseId").put(isAuthenticated, upload.single("courseThumbnail"), updateCourse);
 router.route("/:courseId").get(isAuthenticated, getCourseById);
